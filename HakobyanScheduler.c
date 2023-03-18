@@ -25,10 +25,10 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //GLOBAL VARIABLES
-enum Subject { SER=0, EGR, CSE, EEE };
+int courseCount = 0;
+int credits = 0;
 
-//place to store course information
-struct CourseNode* course_collection = NULL;
+enum Subject { SER=0, EGR, CSE, EEE };
 
 typedef struct CourseNode {
     enum Subject subject;
@@ -38,6 +38,9 @@ typedef struct CourseNode {
 
     struct CourseNode * next;
 } CourseNode;
+
+//place to store course information
+struct CourseNode* course_collection = NULL;
 
 ////////////////////////////////////////////////////////////////////////////////
 //FORWARD DECLARATIONS
