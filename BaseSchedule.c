@@ -1,10 +1,10 @@
 /**
-* (basic description of the program or class)
+* Edgar Hakobyan
 *
 * Completion time: (estimation of hours spent on this program)
 *
-* @author (your name), (anyone else, e.g., Acuna, whose code you used)
-* @version (a version number or a date)
+* @author Edgar Hakobyan, Acuna
+* @version 1.0
 */
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -25,9 +25,19 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //GLOBAL VARIABLES
+enum Subject { SER=0, EGR, CSE, EEE };
 
 //place to store course information
 struct CourseNode* course_collection = NULL;
+
+typedef struct CourseNode {
+    enum Subject subject;
+    int courseCode;
+    char teacher[1024];
+    int credits;
+
+    struct CourseNode * next;
+} CourseNode;
 
 ////////////////////////////////////////////////////////////////////////////////
 //FORWARD DECLARATIONS
