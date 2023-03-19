@@ -43,15 +43,98 @@ struct CourseNode *course_collection = NULL;
 void branching(char option);
 void course_insert(int subject, int courseNumber, int credits, char *teacher);
 void schedule_print();
+void displayList();
 void course_drop();
 void schedule_load();
 void schedule_save();
 const char *enumToString(Subject subject);
 
 
+//main entry point. Starts the program by displaying a welcome and beginning an 
+//input loop that displays a menu and processes user input. Pressing q quits.      
+int main() {
+
+    // insert test data
+    char teacher1[9] = "Teacher1";
+    char teacher2[9] = "Teacher2";
+    char teacher3[9] = "Teacher3";
+    char teacher4[9] = "Teacher4";
+
+    // mock data to test
+    course_insert(SER, 3, 3, teacher2);
+    course_insert(SER, 1, 3, teacher2);
+    course_insert(EEE, 1, 3, teacher2);
+    course_insert(CSE, 3, 3, teacher3);
+    course_insert(CSE, 1, 3, teacher3);
+    course_insert(EGR, 2, 3, teacher3);
+
+    displayList();
+    schedule_print();
+
+
+
+
+
+//	char input_buffer;
+//
+//	printf("\n\nWelcome to ASU Class Schedule\n");
+//
+//	//TODO: stuff goes here...
+//
+//	//menu and input loop
+//	do {
+//		printf("\nMenu Options\n");
+//		printf("------------------------------------------------------\n");
+//		printf("a: Add a class\n");
+//		printf("d: Drop a class\n");
+//		printf("s: Show your classes\n");
+//		printf("q: Quit\n");
+//		//printf("\nTotal Credits: %d\n\n", TODO);
+//		printf("Please enter a choice ---> ");
+//
+//		scanf(" %c", &input_buffer);
+//
+//		branching(input_buffer);
+//	} while (input_buffer != 'q');
+//
+//	//TODO: stuff goes here...
+
+	return 0;
+}
+
 /**
- * A function that performs course insertion to the list while keeping the list sorted at all times.<br>
- * The list is sorted in ascending order, ordered by subject then course number.
+ * Takes a character representing an inputs menu choice and calls the appropriate
+ * function to fullfill that choice. Displays an error message if the character is
+ * not recognized.
+ * @param option input menu option
+ */
+void branching(char option) {
+	switch (option) {
+	case 'a':
+		//TODO
+		break;
+
+	case 'd':
+		//TODO
+		break;
+
+	case 's':
+		//TODO
+		break;
+
+	case 'q':
+		// main loop will take care of this.
+		break;
+
+	default:
+		printf("\nError: Invalid Input.  Please try again...");
+		break;
+	}
+}
+
+/**
+ * Takes inputs from the user, creates a new course, and inserts the course into the list of course.<br>
+ * Isertion of the courses keeps the list sorted at all times by ordering with subject then coruse number.
  * @param head a pointer to the front of the linked list
  * @param subject an input value from the user
  * @param courseNumber and input value from the user
@@ -122,7 +205,7 @@ void course_insert(int subject, int courseNumber, int credits, char *teacher) {
 }
 
 /**
- * A function that converts enum to string.
+ * Converts enum to string.
  * @param subject enum variable
  * @return String representation of the enum
  */
@@ -136,7 +219,7 @@ const char *enumToString(Subject subject) {
 }
 
 /**
- * A function to desplay the entire linked list for testing and debugging purposes.
+ * Displays contents of the linked list in simple manner. Used for testing and debugging.
  * @param head a pointer to the front of the linked list
  */
 void displayList() {
@@ -152,7 +235,7 @@ void displayList() {
 }
 
 /**
- * A function that prints the student's class schedule.
+ * Prints the student's class schedule.
  */
 void schedule_print() {
     struct CourseNode *iter = course_collection;
@@ -166,83 +249,4 @@ void schedule_print() {
             iter = iter->next;
         }
     }
-}
-
-//main entry point. Starts the program by displaying a welcome and beginning an 
-//input loop that displays a menu and processes user input. Pressing q quits.      
-int main() {
-
-    // insert test data
-    char teacher1[9] = "Teacher1";
-    char teacher2[9] = "Teacher2";
-    char teacher3[9] = "Teacher3";
-    char teacher4[9] = "Teacher4";
-
-    // mock data to test
-    course_insert(SER, 3, 3, teacher2);
-    course_insert(SER, 1, 3, teacher2);
-    course_insert(EEE, 1, 3, teacher2);
-    course_insert(CSE, 3, 3, teacher3);
-    course_insert(CSE, 1, 3, teacher3);
-    course_insert(EGR, 2, 3, teacher3);
-
-    displayList();
-    schedule_print();
-
-
-
-
-
-//	char input_buffer;
-//
-//	printf("\n\nWelcome to ASU Class Schedule\n");
-//
-//	//TODO: stuff goes here...
-//
-//	//menu and input loop
-//	do {
-//		printf("\nMenu Options\n");
-//		printf("------------------------------------------------------\n");
-//		printf("a: Add a class\n");
-//		printf("d: Drop a class\n");
-//		printf("s: Show your classes\n");
-//		printf("q: Quit\n");
-//		//printf("\nTotal Credits: %d\n\n", TODO);
-//		printf("Please enter a choice ---> ");
-//
-//		scanf(" %c", &input_buffer);
-//
-//		branching(input_buffer);
-//	} while (input_buffer != 'q');
-//
-//	//TODO: stuff goes here...
-
-	return 0;
-}
-
-//takes a character representing an inputs menu choice and calls the appropriate
-//function to fulfill that choice. display an error message if the character is
-//not recognized.
-void branching(char option) {
-	switch (option) {
-	case 'a':
-		//TODO
-		break;
-
-	case 'd':
-		//TODO
-		break;
-
-	case 's':
-		//TODO
-		break;
-
-	case 'q':
-		// main loop will take care of this.
-		break;
-
-	default:
-		printf("\nError: Invalid Input.  Please try again...");
-		break;
-	}
 }
