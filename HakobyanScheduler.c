@@ -142,11 +142,29 @@ const char *enumToString(Subject subject) {
 void displayList() {
     struct CourseNode *iter = course_collection;
     if (iter == NULL) {
-        printf("NULL LIST");
+        printf("List is empty");
+    } else {
+        while (iter != NULL) {
+            printf("| %s:%d | ---> ", enumToString(iter->subject), iter->courseNumber);
+            iter = iter->next;
+        }
     }
-    while (iter != NULL) {
-        printf("| %s:%d | ---> ", enumToString(iter->subject), iter->courseNumber);
-        iter = iter->next;
+}
+
+/**
+ * A function that prints the student's class schedule.
+ */
+void schedule_print() {
+    struct CourseNode *iter = course_collection;
+    printf("Class Schedule\n");
+    printf("--------------------------------\n");
+    if (iter == NULL) {
+        printf("List is empty");
+    } else {
+        while (iter != NULL) {
+            printf("%s%d\t%d\t%s\n", enumToString(iter->subject), iter->courseNumber, iter->creditHours, iter->teacher);
+            iter = iter->next;
+        }
     }
 }
 
@@ -169,6 +187,7 @@ int main() {
     course_insert(EGR, 2, 3, teacher3);
 
     displayList();
+    schedule_print();
 
 
 
