@@ -1,7 +1,7 @@
 /**
 * Edgar Hakobyan
 *
-* Completion time: (estimation of hours spent on this program)
+* Completion time: 5hr
 *
 * @author Edgar Hakobyan, Acuna
 * @version 1.0
@@ -16,7 +16,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 //GLOBAL VARIABLES
 int totalCreditHours;
-typedef enum { SER=3, EGR=2, CSE=0, EEE=1 } Subject;
+typedef enum { CSE=0, EEE=1, EGR=2, SER=3 } Subject;
 
 ////////////////////////////////////////////////////////////////////////////////
 //DATA STRUCTURES
@@ -25,7 +25,6 @@ typedef struct CourseNode {
     int courseNumber;
     char teacher[1024];
     int creditHours;
-
     struct CourseNode * next;
 } CourseNode;
 
@@ -54,11 +53,11 @@ const char *enumToString(Subject subject);
 int main() {
 
 	char input_buffer;
-    char* filename = "list.txt";
+    char* filename = "course_list.txt";
 
 	printf("\n\nWelcome to ASU Class Schedule\n");
 
-	//TODO: stuff goes here...
+    schedule_load(filename);
 
 	//menu and input loop
 	do {
@@ -68,10 +67,10 @@ int main() {
 		printf("d: Drop a class\n");
 		printf("s: Show your classes\n");
 		printf("q: Quit\n");
-		printf("\nTotal Credits: %d\n\n", totalCreditHours);
+		printf("Total Credits: %d\n\n", totalCreditHours);
 		printf("Please enter a choice ---> ");
 
-		scanf("%c", &input_buffer);
+		scanf(" %c", &input_buffer);
 
 		branching(input_buffer);
 
@@ -88,42 +87,43 @@ int main() {
  * @param option input menu option
  */
 void branching(char option) {
-    Subject subject;
+    int subject;
     int courseNumber;
     char teacher[1024];
     int creditHours;
 
+
 	switch (option) {
-	case 'a':
-            printf("\nWhat is the subject? (SER=0, EGR=1, CSE=2, EEE=3)?");
-            scanf("&d", &subject);
+	    case 'a':
+            printf("\nWhat is the subject? (CSE=0, EEE=1, EGR=2, SER=3)?");
+            scanf("%d", &subject);
             printf("\nWhat is the number (e.g. 240)?");
-            scanf("&d", &courseNumber);
+            scanf("%d", &courseNumber);
             printf("\nHow many credits is the class (e.g. 3)?");
-            scanf("&d", &creditHours);
+            scanf("%d", &creditHours);
             printf("\nWhat is the name of the teacher?");
-            scanf("&s", &teacher);
+            scanf("%s", teacher);
             course_insert(subject, courseNumber, creditHours, teacher);
 		break;
 
-	case 'd':
-            printf("\nWhat is the subject? (SER, EGR, CSE, EEE)?");
-            scanf("&d", &subject);
+	    case 'd':
+            printf("\nWhat is the subject? (CSE=0, EEE=1, EGR=2, SER=3)?");
+            scanf("%d", &subject);
             printf("\nWhat is the number (e.g. 240)?");
-            scanf("&d", &courseNumber);
+            scanf("%d", &courseNumber);
             course_drop(subject, courseNumber);
 		break;
 
-	case 's':
+	    case 's':
 		    schedule_print();
 		break;
 
-	case 'q':
+	    case 'q':
 		// main loop will take care of this.
 		break;
 
-	default:
-		printf("\nError: Invalid Input.  Please try again...");
+	    default:
+		    printf("\nError: Invalid Input.  Please try again...");
 		break;
 	}
 }
@@ -148,29 +148,6 @@ void course_insert(int subject, int courseNumber, int credits, char *teacher) {
     newNode->courseNumber = courseNumber;
     newNode->creditHours = credits;
     strcpy(newNode->teacher, teacher);
-
-
-//    if (head == NULL) {
-//        newNode->next = course_collection;
-//        course_collection = newNode;
-//    }
-//
-//    else {
-//        current = head;
-//        while (current->next != NULL) {
-//            if (current->subject == newNode->subject) {
-//                if (newNode->next > current->next) {
-//                    current = current->next;
-//                } else {
-//                    newNode->next = current->next;
-//                    current->next = newNode;
-//                }
-//            }
-//            current = current->next;
-//        }
-//        // insertion at the end
-//        current->next = newNode;
-//    }
 
     // 3 Cases - insertion at front, insertion in middle, insertion at end
     // insertion in the beginning of the list
@@ -213,92 +190,25 @@ void course_drop(Subject subject, int courseNumber) {
     struct CourseNode *head = course_collection;
     struct CourseNode *temp = head, *prev;
 
-    if (temp != NULL && temp->subject == subject && temp->courseNumber == courseNumber) {
-        course_collection = temp->next;
-        totalCreditHours = totalCreditHours - temp->creditHours;
+    while (temp) {
+        if (temp->subject == subject && temp->courseNumber == courseNumber) {
+            break;
+        } else {
+            prev = temp;
+            temp = temp->next;
+        }
+    }
+    if (temp != NULL) {
+        if (prev == NULL) {
+            course_collection = temp->next;
+        } else {
+            prev->next = temp->next;
+        }
         free(temp);
         return;
     }
-    while (temp != NULL && temp->subject != subject) {
-        prev = temp;
-        temp = temp->next;
-    }
-    while (temp != NULL && temp->courseNumber != courseNumber) {
-        prev = temp;
-        temp = temp->next;
-    }
-
-    //TODO : Solve error when course does not exist
-    if (temp == NULL || temp->subject != subject && temp->courseNumber != courseNumber){
-        printf("ERROR! %s%d doesn't exist\n", enumToString(temp->subject), temp->courseNumber);
-        return;
-    } else {
-        prev->next = temp->next;
-        totalCreditHours = totalCreditHours - temp->creditHours;
-        free(temp);
-        return;
-    }
+    printf("Course does not exist");
 }
-//
-//    else {
-//        current = head;
-//        while (current->next != NULL && current->next->subject <= newNode->subject) {
-//            if (current->next->subject < newNode->subject) {
-//                current = current->next;
-//            } else if (current->next->subject == newNode->subject) {
-//                if (current->next->courseNumber < newNode->courseNumber) {
-//                    current = current->next;
-//                } else {
-//                    // insertion in the middle
-//                    newNode->next = current->next;
-//                    current->next = newNode;
-//                    break;
-//                }
-//            }
-//            current = current->next;
-//        }
-//        // insertion at the end
-//        newNode->next = current->next;
-//        current->next = newNode;
-
-//
-//    struct CourseNode *head = course_collection;
-//    struct CourseNode *temp = head;
-//    struct CourseNode *prev;
-//
-//    // 3 Cases - deletion from the front, deletion from the middle, deletion from the end
-//    // deletion from the front
-//    if (temp->next != NULL && temp->subject == subject && temp->courseNumber == courseNumber) {
-//        // move head to next node and delete current head
-//        head = temp->next;
-//        free(temp);
-//        return;
-//    } else {
-//        while (temp->next != NULL) {
-//            if (temp->next->subject != subject) {
-//                prev = temp;
-//                temp = temp->next;
-//            } else {
-//                if (temp->next->courseNumber != courseNumber) {
-//                    prev = temp;
-//                    temp = temp->next;
-//                } else {
-//                    printf("ERROR! %s%d doesn't exist\n", enumToString(temp->subject), temp->courseNumber);
-//                    break;
-//                }
-//            }
-//
-//        }
-//
-//        if (temp == NULL) {
-//            printf("ERROR! %s%d doesn't exist\n", enumToString(temp->subject), temp->courseNumber);
-//            return;
-//        }
-//        prev->next = temp->next;
-//        free(temp);
-//        return;
-//    }
-//}
 
 /**
  * Converts enum to string.
@@ -312,6 +222,24 @@ const char* enumToString(Subject subject) {
         case CSE: return "CSE";
         case EEE: return "EEE";
     }
+}
+
+/**
+ * Converts string to enum
+ * @param subject string
+ * @return enum representation of the enum
+ */
+int stringToEnum(char *subject) {
+    if (strcmp(subject, "CSE") == 0) {
+        return 0;
+    } else if (strcmp(subject, "EEE") == 0) {
+        return 1;
+    } else if (strcmp(subject, "EGR") == 0) {
+        return 2;
+    } else if (strcmp(subject, "SER") == 0) {
+        return 3;
+    }
+    return 0;
 }
 
 /**
@@ -336,13 +264,13 @@ void displayList() {
  */
 void schedule_print() {
     struct CourseNode *iter = course_collection;
-    printf("Class Schedule\n");
-    printf("--------------------------------\n");
+    printf("\nClass Schedule");
+    printf("\n--------------\n");
     if (iter == NULL) {
-        printf("List is empty");
+        printf("\nList is empty\n");
     } else {
         while (iter != NULL) {
-            printf("%s%d\t%d\t%s\n", enumToString(iter->subject), iter->courseNumber, iter->creditHours, iter->teacher);
+            printf("%s%d %d %s\n", enumToString(iter->subject), iter->courseNumber, iter->creditHours, iter->teacher);
             iter = iter->next;
         }
     }
@@ -354,13 +282,17 @@ void schedule_print() {
  */
 void schedule_load(char *fileName) {
 
-    FILE *file;
-    file = fopen(fileName, "r");
-    if (file == NULL) {
-        printf("Error opening file");
+    FILE *file = fopen(fileName, "r");
+    if (file != NULL) {
+        printf("FIle opened");
+        int num, credit;
+        char subject[4], teacher[1024];
+
+        while (fscanf(file, "%s %d %d %s\n", subject, &num, &credit, teacher) != EOF) {
+            course_insert(stringToEnum(subject), num, credit, teacher);
+        }
+        fclose(file);
     }
-
-
 }
 
 /**
@@ -377,9 +309,10 @@ void schedule_save(char *fileName) {
     }
     // iterate over list and write to file
     while (iter) {
-        fprintf(file, "%s%d/t%d/t%s\n", enumToString(iter->subject),
+        fprintf(file, "%s %d %d %s\n", enumToString(iter->subject),
                 iter->courseNumber, iter->creditHours, iter->teacher);
         iter = iter->next;
     }
     fclose(file); // close file after writing
+    printf("File Closed");
 }
