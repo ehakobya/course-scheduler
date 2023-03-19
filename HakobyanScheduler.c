@@ -50,7 +50,8 @@ const char *enumToString(Subject subject);
 
 
 /**
- * A function that performs course insertion to the list of classes that a student has.<br>
+ * A function that performs course insertion to the list while keeping the list sorted at all times.<br>
+ * The list is sorted in ascending order, ordered by subject then course number.
  * @param head a pointer to the front of the linked list
  * @param subject an input value from the user
  * @param courseNumber and input value from the user
