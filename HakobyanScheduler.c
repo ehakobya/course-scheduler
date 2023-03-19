@@ -36,10 +36,10 @@ struct CourseNode *course_collection = NULL;
 //FORWARD DECLARATIONS
 void branching(char option);
 void course_insert(int subject, int courseNumber, int credits, char *teacher);
-void schedule_print();
-void displayList();
 void course_drop(Subject subject, int courseNumber);
-void schedule_load();
+void schedule_print();
+//void displayList();
+void schedule_load(char *filename);
 void schedule_save(char *fileName);
 const char *enumToString(Subject subject);
 
@@ -53,52 +53,31 @@ const char *enumToString(Subject subject);
  */
 int main() {
 
-    // insert test data
-    char teacher1[9] = "Teacher1";
-    char teacher2[9] = "Teacher2";
-    char teacher3[9] = "Teacher3";
-    char teacher4[9] = "Teacher4";
+	char input_buffer;
+    char* filename = "list.txt";
 
-    // mock data to test
-    course_insert(SER, 3, 3, teacher2);
-    course_insert(SER, 1, 3, teacher2);
-    course_insert(EEE, 1, 3, teacher2);
-    course_insert(CSE, 3, 3, teacher3);
-    course_insert(CSE, 1, 3, teacher3);
-    course_insert(EGR, 2, 3, teacher3);
+	printf("\n\nWelcome to ASU Class Schedule\n");
 
-    displayList();
+	//TODO: stuff goes here...
 
-    course_drop(CSE, 1);
+	//menu and input loop
+	do {
+		printf("\nMenu Options\n");
+		printf("------------------------------------------------------\n");
+		printf("a: Add a class\n");
+		printf("d: Drop a class\n");
+		printf("s: Show your classes\n");
+		printf("q: Quit\n");
+		printf("\nTotal Credits: %d\n\n", totalCreditHours);
+		printf("Please enter a choice ---> ");
 
-    displayList();
-/*
+		scanf("%c", &input_buffer);
 
+		branching(input_buffer);
 
-//	char input_buffer;
-//
-//	printf("\n\nWelcome to ASU Class Schedule\n");
-//
-//	//TODO: stuff goes here...
-//
-//	//menu and input loop
-//	do {
-//		printf("\nMenu Options\n");
-//		printf("------------------------------------------------------\n");
-//		printf("a: Add a class\n");
-//		printf("d: Drop a class\n");
-//		printf("s: Show your classes\n");
-//		printf("q: Quit\n");
-//		//printf("\nTotal Credits: %d\n\n", TODO);
-//		printf("Please enter a choice ---> ");
-//
-//		scanf(" %c", &input_buffer);
-//
-//		branching(input_buffer);
-//	} while (input_buffer != 'q');
-//
-//	//TODO: stuff goes here...
-*/
+	} while (input_buffer != 'q');
+
+    schedule_save(filename);
 	return 0;
 }
 
@@ -109,17 +88,34 @@ int main() {
  * @param option input menu option
  */
 void branching(char option) {
+    Subject subject;
+    int courseNumber;
+    char teacher[1024];
+    int creditHours;
+
 	switch (option) {
 	case 'a':
-		//TODO
+            printf("\nWhat is the subject? (SER=0, EGR=1, CSE=2, EEE=3)?");
+            scanf("&d", &subject);
+            printf("\nWhat is the number (e.g. 240)?");
+            scanf("&d", &courseNumber);
+            printf("\nHow many credits is the class (e.g. 3)?");
+            scanf("&d", &creditHours);
+            printf("\nWhat is the name of the teacher?");
+            scanf("&s", &teacher);
+            course_insert(subject, courseNumber, creditHours, teacher);
 		break;
 
 	case 'd':
-		//TODO
+            printf("\nWhat is the subject? (SER, EGR, CSE, EEE)?");
+            scanf("&d", &subject);
+            printf("\nWhat is the number (e.g. 240)?");
+            scanf("&d", &courseNumber);
+            course_drop(subject, courseNumber);
 		break;
 
 	case 's':
-		//TODO
+		    schedule_print();
 		break;
 
 	case 'q':
@@ -135,10 +131,10 @@ void branching(char option) {
 /**
  * Takes inputs from the user, creates a new course, and inserts the course into the list of course.<br>
  * Isertion of the courses keeps the list sorted at all times by ordering with subject then coruse number.
- * @param head a pointer to the front of the linked list
- * @param subject an input value from the user
- * @param courseNumber an input value from the user
- * @param teacher an input value from the user
+ * @param subject an input value from the user e.g. CSE
+ * @param courseNumber an input value from the user e.g. 240
+ * @param credits an input value from the user e.g. 3
+ * @param teacher an input value from the user e.g. Acuna
  */
 void course_insert(int subject, int courseNumber, int credits, char *teacher) {
 
@@ -309,7 +305,7 @@ void course_drop(Subject subject, int courseNumber) {
  * @param subject enum variable
  * @return String representation of the enum
  */
-const char *enumToString(Subject subject) {
+const char* enumToString(Subject subject) {
     switch (subject) {
         case SER: return "SER";
         case EGR: return "EGR";
@@ -353,6 +349,21 @@ void schedule_print() {
 }
 
 /**
+ * Loads file contents and stores them into the linked list. Performs sorting while loading each course.
+ * @param filename input file name. Used for creating/loading a file to save data
+ */
+void schedule_load(char *fileName) {
+
+    FILE *file;
+    file = fopen(fileName, "r");
+    if (file == NULL) {
+        printf("Error opening file");
+    }
+
+
+}
+
+/**
  * Saves the contents of the linked list to a file.
  * @param fileName input file name. Used for creating/loading a file to save data
  */
@@ -361,7 +372,7 @@ void schedule_save(char *fileName) {
     FILE *file;
     file = fopen(fileName, "w");
     if (file == NULL) {
-        printf("File could not be opened");
+        printf("Error opening file");
         return;
     }
     // iterate over list and write to file
