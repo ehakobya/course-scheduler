@@ -14,18 +14,12 @@
 #include <string.h>
 
 ////////////////////////////////////////////////////////////////////////////////
-//MACROS: CONSTANTS
-
+//GLOBAL VARIABLES
+int totalCreditHours;
+typedef enum { SER=3, EGR=2, CSE=0, EEE=1 } Subject;
 
 ////////////////////////////////////////////////////////////////////////////////
 //DATA STRUCTURES
-
-
-////////////////////////////////////////////////////////////////////////////////
-//GLOBAL VARIABLES
-
-typedef enum { SER=3, EGR=2, CSE=0, EEE=1 } Subject;
-
 typedef struct CourseNode {
     Subject subject;
     int courseNumber;
@@ -44,14 +38,19 @@ void branching(char option);
 void course_insert(int subject, int courseNumber, int credits, char *teacher);
 void schedule_print();
 void displayList();
-void course_drop();
+void course_drop(Subject subject, int courseNumber);
 void schedule_load();
-void schedule_save();
+void schedule_save(char *fileName);
 const char *enumToString(Subject subject);
 
+////////////////////////////////////////////////////////////////////////////////
+//FUNCTIONS
 
-//main entry point. Starts the program by displaying a welcome and beginning an 
-//input loop that displays a menu and processes user input. Pressing q quits.      
+/**
+ * Main entry point. Starts the program by displaying a welcome and begining and
+ * input loop that displays a menu and processes user input. Pressing q quits
+ * @return
+ */
 int main() {
 
     // insert test data
@@ -73,7 +72,6 @@ int main() {
     course_drop(CSE, 1);
 
     displayList();
-
 /*
 
 
@@ -183,6 +181,7 @@ void course_insert(int subject, int courseNumber, int credits, char *teacher) {
     if (head == NULL || head->subject >= newNode->subject) {
         newNode->next = course_collection;
         course_collection = newNode;
+        totalCreditHours = totalCreditHours + newNode->creditHours;
     }
     else {
         current = head;
@@ -196,6 +195,7 @@ void course_insert(int subject, int courseNumber, int credits, char *teacher) {
                     // insertion in the middle
                     newNode->next = current->next;
                     current->next = newNode;
+                    totalCreditHours = totalCreditHours + newNode->creditHours;
                     break;
                 }
             }
@@ -204,6 +204,7 @@ void course_insert(int subject, int courseNumber, int credits, char *teacher) {
         // insertion at the end
         newNode->next = current->next;
         current->next = newNode;
+        totalCreditHours = totalCreditHours + newNode->creditHours;
     }
 }
 
@@ -218,6 +219,7 @@ void course_drop(Subject subject, int courseNumber) {
 
     if (temp != NULL && temp->subject == subject && temp->courseNumber == courseNumber) {
         course_collection = temp->next;
+        totalCreditHours = totalCreditHours - temp->creditHours;
         free(temp);
         return;
     }
@@ -230,12 +232,16 @@ void course_drop(Subject subject, int courseNumber) {
         temp = temp->next;
     }
 
-    if (temp == NULL) {
+    //TODO : Solve error when course does not exist
+    if (temp == NULL || temp->subject != subject && temp->courseNumber != courseNumber){
         printf("ERROR! %s%d doesn't exist\n", enumToString(temp->subject), temp->courseNumber);
         return;
+    } else {
+        prev->next = temp->next;
+        totalCreditHours = totalCreditHours - temp->creditHours;
+        free(temp);
+        return;
     }
-    prev->next = temp->next;
-    free(temp);
 }
 //
 //    else {
@@ -344,4 +350,25 @@ void schedule_print() {
             iter = iter->next;
         }
     }
+}
+
+/**
+ * Saves the contents of the linked list to a file.
+ * @param fileName input file name. Used for creating/loading a file to save data
+ */
+void schedule_save(char *fileName) {
+    struct CourseNode *iter = course_collection;
+    FILE *file;
+    file = fopen(fileName, "w");
+    if (file == NULL) {
+        printf("File could not be opened");
+        return;
+    }
+    // iterate over list and write to file
+    while (iter) {
+        fprintf(file, "%s%d/t%d/t%s\n", enumToString(iter->subject),
+                iter->courseNumber, iter->creditHours, iter->teacher);
+        iter = iter->next;
+    }
+    fclose(file); // close file after writing
 }
